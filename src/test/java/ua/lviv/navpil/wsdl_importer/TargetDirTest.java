@@ -1,17 +1,29 @@
 package ua.lviv.navpil.wsdl_importer;
 
+import org.junit.Rule;
+import org.junit.rules.TemporaryFolder;
+
 import java.io.File;
 
 import static org.junit.Assert.*;
 
 public class TargetDirTest {
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
+
     @org.junit.Test
     public void convert() throws Exception {
-        TargetDir creator = new TargetDir("/c/temp/target");
-        String convert = creator.createSubDirectory("http://www.w3.org/long/way/to/Heaven.xsd");
+        File target = folder.newFolder("target");
 
-        assertEquals("/c/temp/target/www.w3.org/long/way/to/Heaven.xsd".replace('/', File.separatorChar), convert.replace('/', File.separatorChar));
+        TargetDir targetDir = new TargetDir(target.getCanonicalPath());
+        String convert = targetDir.createSubDirectory("http://www.w3.org/long/way/to/Heaven.xsd");
 
+        assertEquals(normalize(target.getCanonicalPath() + "/www.w3.org/long/way/to/Heaven.xsd"), normalize(convert));
+    }
+
+    private String normalize(String convert) {
+        return convert.replace('/', File.separatorChar);
     }
 
 }
